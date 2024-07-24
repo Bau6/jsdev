@@ -1,25 +1,23 @@
-import logo from './logo.svg';
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import TablePage from "./table/table";
+import TasksPage from "./tasks/tasks";
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App = () => {
+    return (
+        <BrowserRouter>
+            <AppContent />
+        </BrowserRouter>
+    );
 }
-
+const AppContent = () => {
+    return (
+        <div>
+            <Routes>
+                <Route path={'/'} element={<TablePage />}/>
+                <Route path={'/tasks'} element={<TasksPage />}/>
+            </Routes>
+        </div>
+    );
+}
 export default App;
