@@ -1,4 +1,5 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {memo} from 'react';
 import TablePage from "./table/table";
 import TasksPage from "./tasks/tasks";
 import './App.css';
@@ -10,7 +11,7 @@ const App = () => {
         </BrowserRouter>
     );
 }
-const AppContent = () => {
+const AppContent = memo(() => {
     return (
         <div>
             <Routes>
@@ -19,5 +20,5 @@ const AppContent = () => {
             </Routes>
         </div>
     );
-}
+});
 export default App;

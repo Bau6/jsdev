@@ -11,24 +11,51 @@ import {
     Col,
 } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import tableCss from "../table/table.module.css";
+import {useNavigate} from "react-router-dom";
 
 function Tasks() {
+    const navigate = useNavigate();
     const [tasks, setTasks] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
-
-    // Загрузка задач из локального хранилища при монтировании компонента
+    const [sortByDate, setSortByDate] = useState(false);
+    // Загрузка задач из sessionStorage при монтировании компонента
     useEffect(() => {
         const storedTasks = localStorage.getItem('tasks');
+
         if (storedTasks) {
+            console.log(storedTasks);
             setTasks(JSON.parse(storedTasks));
         }
     }, []);
 
-    // Сохранение задач в локальном хранилище при каждом изменении состояния
+    // Сохранение задач в sessionStorage при каждом изменении состояния tasks
     useEffect(() => {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }, [tasks]);
+
+    const handleSortByDate = () => {
+        setSortByDate(!sortByDate);
+        // Сортировка массива задач
+        const sortedTasks = [...tasks].sort((a, b) => {
+            if (sortByDate) {
+                // Сортировка по возрастанию даты
+                return new Date(a.dueDate) - new Date(b.dueDate);
+            } else {
+                // Сортировка по убыванию даты
+                return new Date(b.dueDate) - new Date(a.dueDate);
+            }
+        });
+        // Обновление состояния задач
+        setTasks(sortedTasks); // Обновление состояния ⓃtasksⓃ
+    };
+
+    // Обработчик события beforeunload
+    window.addEventListener('beforeunload', (event) => {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        console.log('Данные сохранены в sessionStorage:', localStorage.getItem('tasks')); // Проверка в консоли
+    });
 
     // Обработчик добавления новой задачи
     const handleAddTask = (event) => {
@@ -43,6 +70,7 @@ function Tasks() {
         setTasks([...tasks, newTask]);
         setShowModal(false); // Закрываем модальное окно
         event.target.reset(); // Очищаем форму
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     };
 
     // Обработчик изменения задачи
@@ -84,8 +112,14 @@ function Tasks() {
         );
     };
 
+    const handleClick = () => {
+        navigate('/'); // Вызываем navigate для перехода на '/tasks'
+    };
+
     return (
-        <Container>
+        <div>
+            <button className={tableCss.button} onClick={handleClick}>Перейти на страницу таблицы</button>
+        <Container style={{ position: 'relative' }}>
             <Row className="justify-content-center">
                 <Col md={8}>
                     <h1 className="text-center mb-4">Список задач</h1>
@@ -97,7 +131,12 @@ function Tasks() {
                         <tr>
                             <th>Заголовок</th>
                             <th>Описание</th>
-                            <th>Дата завершения</th>
+                            <th onClick={handleSortByDate}>
+                                Дата завершения
+                                <span
+                                    className={`${tableCss.sortIcon} ${sortByDate ? tableCss.asc : tableCss.desc}`}
+                                ></span>
+                            </th>
                             <th>Статус</th>
                             <th>Действия</th>
                         </tr>
@@ -184,6 +223,7 @@ function Tasks() {
                 </Modal.Body>
             </Modal>
         </Container>
+            </div>
     );
 }
 

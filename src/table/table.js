@@ -35,7 +35,7 @@ function TablePage() {
             setUsers(await fetchUsers());
         } else {
             try {
-                const response = await fetch(`https://dummyjson.com/users/filter?q=${encodeURIComponent(searchTerm)}`);
+                const response = await fetch(`https://dummyjson.com/users/filter?searchTerm=${encodeURIComponent(searchTerm)}`);
                     if (!response.ok) {
                         throw new Error(`Ошибка HTTP: ${response.status}`);
                     }
@@ -107,7 +107,7 @@ function TablePage() {
 
     return (
         <div className={tableCss.indent}>
-            <button onClick={handleClick}>Перейти на страницу задач</button>
+            <button className={tableCss.button} onClick={handleClick}>Перейти на страницу задач</button>
             <div className="container mt-4">
                 <h1>Таблица пользователей</h1>
 
